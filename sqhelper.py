@@ -53,12 +53,21 @@ class basedatos:
         self.executeAndCommitDB(head+tail,dataList)
         print("Data inserted at " + table)
 
-    def readTable(self, table, field=None, value=None):
-        cadena = "select * from " + table
+    def readTable(self, table, field=None, value=None, returnVal='*'):
+        cadena = "select " + returnVal + " from " + table
         c = self.db.cursor()
-        if field and value:
-            cadena += " where " + field 
-            cadena += " like '%" + value + "%'"
+        if type(field) == type([1,2]):
+            cadena += " where"
+            for i,j in zip(field, value):
+                cadena += " " + i
+                cadena += " like '%" + j + "%'"
+                cadena += " AND"
+            cadena = cadena[:-4]
+        else:
+            if field and value:
+                cadena += " where " + field 
+                cadena += " like '%" + value + "%'"
+        print(cadena)
         c.execute(cadena)
         dataList = []
         for i in c: dataList.append(i)

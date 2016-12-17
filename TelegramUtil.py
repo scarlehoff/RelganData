@@ -1,7 +1,7 @@
 from configurationData import TOKEN # Unique identifier
-baseURL = "https://api.telegram.org/bot{}/".format(TOKEN)
-
-
+telegramURL = "https://api.telegram.org/"
+baseURL     = telegramURL + "bot{}/".format(TOKEN)
+baseFileURL = telegramURL + "file/bot{}/".format(TOKEN)
 
 class TelegramUtil:
 
@@ -9,6 +9,8 @@ class TelegramUtil:
         self.offset  = None
         self.getMsg  = baseURL + "getUpdates"
         self.sendMsg = baseURL + "sendMessage"
+        self.getFile = baseURL + "getFile"
+
     def __makeRequest(self, url):
         # returns the response of a given url
         from requests import get
@@ -28,6 +30,12 @@ class TelegramUtil:
         for update in updates:
             li.append(int(update["update_id"]))
         self.offset = max(li) + 1
+
+    def getFilePath(self, fileId):
+        url  = self.getFile + "?file_id={}".format(fileId)
+        json = self.__getJsonFromUrl(url)['result']
+        fpath = json['file_path']
+        return baseFileURL + fpath
             
     def getUpdates(self):
         # Returns a json with the last messages the bot has received

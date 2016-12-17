@@ -16,6 +16,11 @@ def main():
         db.createTableText(["personaje", "caracteristica", "poder"], "habilidad")
     except:
         pass
+    try:
+        db.createTableText(["nombre", "imgpath"], "poder")
+    except:
+        pass
+    ut = TelegramUtil()
     ut = TelegramUtil()
     from time import sleep
     while True:
