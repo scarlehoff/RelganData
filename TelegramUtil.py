@@ -10,6 +10,7 @@ class TelegramUtil:
         self.getMsg  = baseURL + "getUpdates"
         self.sendMsg = baseURL + "sendMessage"
         self.getFile = baseURL + "getFile"
+        self.sendImg = baseURL + "sendPhoto"
 
     def __makeRequest(self, url):
         # returns the response of a given url
@@ -55,5 +56,13 @@ class TelegramUtil:
         text =  parse.quote_plus(text)
         url = self.sendMsg + "?text={}&chat_id={}".format(text, chat)
         self.__makeRequest(url)
-        
+
+    def sendImage(self, imgPath, chat):
+        from requests import post
+        data  = {'chat_id': chat}
+        img   = open(imgPath, 'rb')
+        files = {'photo': ('picture.jpg', img)} #Here, the ,"rb" thing
+        blabla = post(self.sendImg, data=data, files=files)
+        print(blabla.status_code, blabla.reason, blabla.content)
+            
 

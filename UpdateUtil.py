@@ -58,12 +58,17 @@ class UpdateUtil():
                 for i in info: self.response += i[0]
             else:
                 self.response = "Could not find this value in the database, I'm so so sorry"
-        else:
+        else: 
             return self.__printError("Necesitas mas argumentos para esto cabesa")
         return 1
 
     def __printPoder(self):
-        info = seld.db.readTable("poder", "nombre", self.arg, "imgpath")
+        imgpath = self.db.readTable("poder", "nombre", self.arg, "imgpath")
+        if len(imgpath) > 0:
+            for i in imgpath:
+                self.response = i[0] #if there's more than one, send the last one!
+        else:
+            return self.__printError("Can't find it")
         return 2
 
     def __storeInfo(self):

@@ -34,7 +34,7 @@ def main():
             if typeResponse == 1:
                 ut.sendMessage(response, chatId)
             elif typeResponse == 2:
-                # ut.sendImage(response, chatId)
+                ut.sendImage(response, chatId)
                 pass
 
 
