@@ -5,8 +5,10 @@
 #
 
 from TelegramUtil import TelegramUtil
-from UpdateUtil import UpdateUtil
 from sqhelper import basedatos
+from Message import Message
+from time import sleep
+from ProcessUpdate import ProcessUpdate
 
 def main():
     # Activate the database
@@ -21,22 +23,14 @@ def main():
     except:
         pass
     ut = TelegramUtil()
-    ut = TelegramUtil()
-    from time import sleep
     while True:
         updates = ut.getUpdates()
         for update in updates:
-            print(update)
-            lastUpdate   = UpdateUtil(update, db)
-            chatId       = lastUpdate.chatId
-            typeResponse = lastUpdate.processCommand()
-            response     = lastUpdate.response
-            if typeResponse == 1:
-                ut.sendMessage(response, chatId)
-            elif typeResponse == 2:
-                ut.sendImage(response, chatId)
-                pass
-
+            updateParsed = Message(update)
+            if updateParsed.ignore:
+                continue
+            else:
+                processedUpdate = ProcessUpdate(updateParsed, db, ut)
 
 if __name__ == '__main__':
     main()
