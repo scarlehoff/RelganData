@@ -20,7 +20,6 @@ class Message:
         ik1 = "new_chat_participant"
         ik2 = "left_chat_participant"
         msg = "message"
-
         self.json = jsonDict
         keys      = jsonDict.keys()
         if msg not in keys:
@@ -57,8 +56,11 @@ class Message:
             self.command             = ""
             self.isRegisteredCommand = False
         if self.isCommand:
-            allText = self.text.split(' ', 1)
+            allText      = self.text.split(' ', 1)
             self.command = allText[0][1:]
+            # Absorb the @ in case is it a directed command
+            if '@' in self.command:
+                self.command = self.command.split('@')[0]
             self.text    = allText[-1]
             if self.command in registeredCommands:
                 self.isRegisteredCommand = True

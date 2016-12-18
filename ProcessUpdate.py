@@ -23,6 +23,8 @@ class ProcessUpdate:
             self.__sendMessage("a ver, túmbate en esa camilla")
         elif command == "r" or command == "roll":
             self.__rollDice()
+        elif command == "start":
+            self.__sendMessage("Welcome!")
         else:
             self.__printError("Command not recognised")
 
