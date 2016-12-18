@@ -10,7 +10,7 @@ class Message:
 # isFile              - t/f
 # fileId              - file id
 # text                - actual content of the message (minus /command)
-# command             - command given in /command (or None)
+# command             - command given in /command (or "")
 # ignore              - t/f (whether this message should be ignored)
 
     def __init__(self, jsonDict):
@@ -21,7 +21,8 @@ class Message:
         ik2 = "left_chat_participant"
         msg = "message"
 
-        keys = jsonDict.keys()
+        self.json = jsonDict
+        keys      = jsonDict.keys()
         if msg not in keys:
             msg = "edited message"
         try:
@@ -53,7 +54,7 @@ class Message:
             self.isCommand = True
         else:
             self.isCommand           = False
-            self.command             = None
+            self.command             = ""
             self.isRegisteredCommand = False
         if self.isCommand:
             allText = self.text.split(' ', 1)

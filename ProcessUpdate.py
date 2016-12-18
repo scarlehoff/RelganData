@@ -4,6 +4,7 @@ class ProcessUpdate:
         self.db       = db       # basedatos Class
         self.telegram = telegram # TelegramUtil Clss
         self.response = None
+        self.__debugFunction() # print debug
         if self.update.isCommand:
             command = self.update.command
         else:
@@ -27,8 +28,18 @@ class ProcessUpdate:
     def __sendImage(self, imgPath):
         self.telegram.sendImage(imgPath, self.update.chatId)
 
+    # Actual function
+    def __debugFunction(self):
+        # Just prints a bunch of stuff 
+        print("> > Message received:")
+        print("     From: " + self.update.username)
+        print("     Is it a group?: " + str(self.update.isGroup))
+        print("     Content: " + self.update.command + " " + self.update.text)
+        print("     Does it have a file?: " + str(self.update.isFile))
+        print("     The whole thing is: " + str(self.update.json))
     def __sendHelp(self):
-        helpmsg = "This is"
+        helpmsg = "This is the help message, it is useless because my Master is very lazy, sorry"
+        self.__sendMessage(helpmsg)
         
     def __saveImg(self):
         fileUrl  = self.telegram.getFilePath(self.update.fileId)
@@ -39,7 +50,6 @@ class ProcessUpdate:
 
     def __printHabilidad(self):
         args = self.update.text.split(' ') # should be "personaje caracteristica"
-        print(args)
         if len(args) == 2:
             info = self.db.readTable("habilidad",["personaje","caracteristica"],args,"poder")
             if len(info) > 0:
