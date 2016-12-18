@@ -46,7 +46,12 @@ class TelegramUtil:
         if self.offset:
             url += "&offset={}".format(self.offset)
         updates = self.__getJsonFromUrl(url)
-        result  = updates["result"]
+        try:
+            result  = updates["result"]
+        except:
+            print(updates)
+            return []
+            pass
         self.__reOffset(result)
         return result
 

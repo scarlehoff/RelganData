@@ -25,12 +25,15 @@ def main():
     ut = TelegramUtil()
     while True:
         updates = ut.getUpdates()
-        for update in updates:
-            updateParsed = Message(update)
-            if updateParsed.ignore:
-                continue
-            else:
-                processedUpdate = ProcessUpdate(updateParsed, db, ut)
+        try:
+            for update in updates:
+                updateParsed = Message(update)
+                if updateParsed.ignore:
+                    continue
+                else:
+                    processedUpdate = ProcessUpdate(updateParsed, db, ut)
+        except:
+            pass
 
 if __name__ == '__main__':
     main()

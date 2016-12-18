@@ -24,7 +24,7 @@ class Message:
         self.json = jsonDict
         keys      = jsonDict.keys()
         if msg not in keys:
-            msg = "edited message"
+            msg = "edited_message"
         try:
             message = jsonDict[msg]
         except:
