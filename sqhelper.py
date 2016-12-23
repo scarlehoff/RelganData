@@ -60,7 +60,6 @@ class basedatos:
             if field and value:
                 cadena += " where " + field 
                 cadena += " like '%" + value + "%'"
-        print(cadena)
         c.execute(cadena)
         dataList = []
         for i in c: dataList.append(i)

@@ -12,23 +12,40 @@ class Character:
         except:
             pass
         self.name  = name
-        self.exist = False
+        self.exist = self.__readEntity()
+    
+    def __newTableCharacter(self):
+        # TODO: Check fields in SkillSet == fields in  table
+        self.db.createTableText(self.finalList, self.tablename)
 
-    def readEntity(self):
+    def __readEntity(self):
         # Check whether the character exists and read database if that's the case
         # return true if it exists and false otherwise
         characterQuery = self.db.readTable(self.tablename, self.nameField, self.name)
-        # In principle there should be ONLY one value for each character and cannot be 
-        # overwritten (only modified) so this should be safe:
-        character = characterQuery[0][1:]
+
+        if len(characterQuery) == 1:
+            character = characterQuery[0][1:]
+        elif len(characterQuery) == 0:
+            return False
+        else:
+            print(" >> There was something wrong in the Character reading, more than 1 character")
+            print(" CharacterQuery: ")
+            print(characterQuery)
+            print("Let's treat it as true for safety and select the last one")
+            character = characterQuery[-1][1:]
+
         for skill, value in zip(self.finalList, character):
             self.skillSet[skill] = value
+        return True
 
     def printEntity(self):
         return self.skillSet
 
     def printSkill(self, skillName):
-        return self.skillSet[skillName]
+        if skillName in self.finalList:
+            return self.skillSet[skillName]
+        else:
+            return None
 
     def outEntity(self):
         dictOut = {}
@@ -45,11 +62,8 @@ class Character:
         # TODO: Check field is actually in the list of fields
         self.db.modifyRecord(self.tablename, field, value, self.nameField, self.name)
         # Update character
-        self.readEntity()
+        self.__readEntity()
 
-    def __newTableCharacter(self):
-        # TODO: Check fields in SkillSet == fields in  table
-        self.db.createTableText(self.finalList, self.tablename)
 
 
 if __name__ == "__main__":
@@ -71,7 +85,6 @@ if __name__ == "__main__":
     # Read the character back from the database
     print("Reading an old character:")
     oldCharacter = Character(database, charName)
-    oldCharacter.readEntity()
     dictOut = oldCharacter.printEntity()
     for skill in listTo:
         print(skill + ": " + dictOut[skill]) 

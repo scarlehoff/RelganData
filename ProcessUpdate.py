@@ -56,12 +56,14 @@ class ProcessUpdate:
         return filename
 
     def __printHabilidad(self):
+        from Character import Character
         args = self.update.text.split(' ') # should be "personaje caracteristica"
         if len(args) == 2:
-            info = self.db.readTable("habilidad",["personaje","caracteristica"],args,"poder")
-            if len(info) > 0:
-                response = "The answer is: "
-                for i in info: response += i[0]
+            character = Character(self.db, args[0])
+            # TODO: Allow for people not writing stuff correctly
+            info      = character.printSkill(args[1])
+            if info:
+                response = "The answer is: " + info
             else:
                 self.__printError("Could not find this value in the database, I'm so so sorry")
                 return
