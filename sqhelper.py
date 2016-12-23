@@ -9,16 +9,9 @@ class basedatos:
         c = self.db.cursor()
         string = stringRaw.lower()
         if options:
-            try:
-                c.execute(string,options)
-            except:
-                c.execute(string,options)
-                pdb.set_trace()
+            c.execute(string,options)
         else:
-            try:
-                c.execute(string)
-            except:
-                c.execute(string)
+            c.execute(string)
         c.close()
         self.db.commit()
 
@@ -37,7 +30,7 @@ class basedatos:
         print("Table " + nombre + " has been created.")
 
 
-    def insertDataInTable(self,dataList, table):
+    def insertDataInTable(self, dataList, table):
         head = "insert into " + table + "("
         campos = self.listOfFields(table)
         for i in campos:
@@ -74,6 +67,31 @@ class basedatos:
         c.close()
         return dataList
 
+    def modifyRecord(self, table, fieldName, newValue, idField, idValue):
+        cadena  = "UPDATE " + table + " SET " + fieldName + " = ? WHERE "
+        cadena += idField + " = ?"
+        tupla   = (newValue, idValue)
+        self.executeAndCommitDB(cadena, tupla)
+        print("Data modified for " + idValue)
+
+#     def modifyRecord(self, tabla):
+#          # Modify a record of the table tabla
+#         d = self.readTable(tabla)
+#         for i in d: print i
+#         print "Select record id"
+#         idr = protectedInput(" > id of the field: ")
+#         print "Which field do you want to modify?"
+#         campos = self.listOfFields(tabla)
+#         print "Fields:"
+#         for i in campos: print i
+#         fieldr = protectedInput(" > name of the field: ")
+#         cad = "UPDATE " + tabla + " SET " + fieldr + " = ? WHERE id = ?"
+#         print "Introduce the new value for this field:"
+#         newvl = protectedInput(" > new value: ")
+#         tupla = (newvl, idr)
+#         self.executeAndCommitDB(cad,tupla)
+#         return 0
+
     def listOfTables(self, filt = None):
         # Return list of tables in self.db
         # (that are called filt+something)
@@ -104,22 +122,3 @@ class basedatos:
             if i[1] != u"id": listOfFields.append(i[1])
         c.close()
         return listOfFields
-
-#     def modifyRecord(self, tabla):
-#          # Modify a record of the table tabla
-#         d = self.readTable(tabla)
-#         for i in d: print i
-#         print "Select record id"
-#         idr = protectedInput(" > id of the field: ")
-#         print "Which field do you want to modify?"
-#         campos = self.listOfFields(tabla)
-#         print "Fields:"
-#         for i in campos: print i
-#         fieldr = protectedInput(" > name of the field: ")
-#         cad = "UPDATE " + tabla + " SET " + fieldr + " = ? WHERE id = ?"
-#         print "Introduce the new value for this field:"
-#         newvl = protectedInput(" > new value: ")
-#         tupla = (newvl, idr)
-#         self.executeAndCommitDB(cad,tupla)
-#         return 0
-

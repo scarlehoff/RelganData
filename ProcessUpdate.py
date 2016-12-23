@@ -83,7 +83,8 @@ class ProcessUpdate:
     def __storeInfo(self):
         args = self.update.text.split(' ')
         if args[0] == "habilidad" and len(args) == 4:
-            self.db.insertDataInTable(args[1:], "habilidad")
+            self.__sendMessage("Please, use the web interface.")
+#             self.db.insertDataInTable(args[1:], "habilidad")
         elif args[0] == "poder":
             if self.update.isFile:
                 imgPath = self.__saveImg()
