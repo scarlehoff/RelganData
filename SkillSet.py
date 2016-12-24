@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 nameField = "sk01"
+tableName = "Habilidad"
 
 utf8dict  = {
   "sk01":"Name",
@@ -26,6 +27,8 @@ utf8dict  = {
   "sk22":"Religión",
   "sk23":"Sanar",
   "sk24":"Sigilo",
+  "sk25":"PG max",
+  "sk26":"PG actual",
   }
 
 skillList = ["sk01",
@@ -51,4 +54,6 @@ skillList = ["sk01",
              "sk21",
              "sk22",
              "sk23",
-             "sk24"]
+             "sk24",
+             "sk25",
+             "sk26"]

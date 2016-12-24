@@ -44,6 +44,18 @@ def listFields():
     nameList = [utf8dict[idSk] for idSk in idList]
     return idList, nameList, nameField
 
+def listCharacters(dbPath):
+    if __name__ == "__main__":
+        from sqhelper import basedatos
+        from SkillSet import nameField, tableName
+    else:
+        from .sqhelper import basedatos
+        from .SkillSet import nameField, tableName
+    db         = basedatos(dbPath)
+    characters = db.readTable(tableName, returnVal = nameField)
+    return characters
+
+
 def saveCharacter(name, dbPath, dictIn):
     if __name__ == "__main__":
         from Character import Character
