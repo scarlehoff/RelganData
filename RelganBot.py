@@ -13,11 +13,7 @@ from ProcessUpdate import ProcessUpdate
 def main():
     # Activate the database
     db = basedatos("Relgan.dat")
-    # Create Tables if the don't exist:
-    try:
-        db.createTableText(["personaje", "caracteristica", "poder"], "habilidad")
-    except:
-        pass
+    # Create poder if the table don't exist:
     try:
         db.createTableText(["nombre", "imgpath"], "poder")
     except:
