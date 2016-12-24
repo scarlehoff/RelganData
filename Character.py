@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Character:
 
     def __init__(self, database, name):
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     dictOut = oldCharacter.printEntity()
     for skill in listTo:
         print(skill + ": " + dictOut[skill]) 
-    print(oldCharacter.printSkill("Engañar"))
+#    print(oldCharacter.printSkill("Engañar"))
 
 
 

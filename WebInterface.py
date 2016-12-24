@@ -1,4 +1,5 @@
 # This is just a few wrappers to be called by the web server
+# -*- coding: utf-8 -*-
 
 def dropNameField(listIn, nameField):
     listOut = []  
