@@ -1,7 +1,11 @@
 class Character:
 
     def __init__(self, database, name):
-        from .SkillSet import statList, skillList, nameField
+        if __name__ == "Character":
+            from SkillSet import statList, skillList, nameField
+        else:
+            from .SkillSet import statList, skillList, nameField
+        # TODO: This should be input!
         self.finalList = statList + skillList
         self.nameField = nameField
         self.db        = database
