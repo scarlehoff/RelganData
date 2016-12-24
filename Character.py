@@ -13,6 +13,7 @@ class Character:
         self.db        = database
         self.tablename = "habilidad"
         self.skillSet  = {}
+        self.idSet     = {}
         try:
             self.__newTableCharacter()
         except:
@@ -40,8 +41,9 @@ class Character:
             print("Let's treat it as true for safety and select the last one")
             character = characterQuery[-1][1:]
 
-        for skill, value in zip(self.finalList, character):
+        for skid, skill, value in zip(self.skillIds, self.finalList, character):
             self.skillSet[skill] = value
+            self.idSet[skid]     = value
         return True
 
     def __saveNewEntity(self, dictionary, idList):
@@ -55,6 +57,9 @@ class Character:
 
     def printEntity(self):
         return self.skillSet
+
+    def printEntityById(self):
+        return self.idSet
 
     def printSkill(self, skillName):
         if skillName in self.finalList:

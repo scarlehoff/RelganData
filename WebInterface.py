@@ -1,11 +1,21 @@
 # This is just a few wrappers to be called by the web server
 # -*- coding: utf-8 -*-
 
-def dropNameField(listIn, nameField):
-    listOut = []  
-    for i in listIn:
-        if nameField != i: listOut.append(i)
-    return listOut
+def dropNameField(listIn, nameField, listIn2 = None):
+    listOut1 = []
+    listOut2 = []
+    if listIn2:
+        listLoop = zip(listIn, listIn2)
+    else:
+        listLoop = zip(listIn, listIn)
+    for i,j in listLoop:
+        if nameField != i:
+            listOut1.append(i)
+            if listIn2: listOut2.append(j)
+    if listIn2:
+        return listOut1, listOut2
+    else:
+        return listOut1
 
 def getCharacter(name, dbPath):
     if __name__ == "__main__":
@@ -18,11 +28,12 @@ def getCharacter(name, dbPath):
     character = Character(db, name)
     if not character.exists:
         return -1
-    allFields = character.finalList
+    idFields = character.skillIds
+    nameFields = character.finalList
     nameField = character.nameField
-    dictOut   = character.printEntity()
-    outFields = dropNameField(allFields, nameField)
-    return outFields, nameField, dictOut
+    dictOut = character.printEntityById()
+    ids, skillNames = dropNameField(idFields, nameField, nameFields)
+    return ids, skillNames, dictOut
 
 def listFields():
     if __name__ == "__main__":
