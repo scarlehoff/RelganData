@@ -1,9 +1,9 @@
 class Character:
 
     def __init__(self, database, name):
-        from SkillSet import statList, skillList
+        from .SkillSet import statList, skillList, nameField
         self.finalList = statList + skillList
-        self.nameField = self.finalList[0]
+        self.nameField = nameField
         self.db        = database
         self.tablename = "habilidad"
         self.skillSet  = {}
@@ -11,8 +11,8 @@ class Character:
             self.__newTableCharacter()
         except:
             pass
-        self.name  = name
-        self.exist = self.__readEntity()
+        self.name   = name
+        self.exists = self.__readEntity()
     
     def __newTableCharacter(self):
         # TODO: Check fields in SkillSet == fields in  table
@@ -47,22 +47,20 @@ class Character:
         else:
             return None
 
-    def outEntity(self):
-        dictOut = {}
-        return dictOut
-
     def saveNewEntity(self, dictionary):
         # store into database
         inputList = []
         for skill in self.finalList:
             inputList.append(dictionary[skill])
         self.db.insertDataInTable(inputList, self.tablename)
+        # Update character
+        self.exists = self.__readEntity()
 
     def modifyEntity(self, field, value): 
         # TODO: Check field is actually in the list of fields
         self.db.modifyRecord(self.tablename, field, value, self.nameField, self.name)
         # Update character
-        self.__readEntity()
+        self.exists = self.__readEntity()
 
 
 

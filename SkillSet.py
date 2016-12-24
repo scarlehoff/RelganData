@@ -1,3 +1,5 @@
+nameField = "Name"
+
 statList = [
     "Name",
     "Fuerza",
