@@ -2,12 +2,13 @@
 class Character:
 
     def __init__(self, database, name):
-        if __name__ == "Character":
-            from SkillSet import statList, skillList, nameField
+        if __name__ == "Character" or __name__ == "__main__":
+            from SkillSet import nameField, skillList, utf8dict
         else:
-            from .SkillSet import statList, skillList, nameField
+            from .SkillSet import nameField, skillList, utf8dict
         # TODO: This should be input!
-        self.finalList = statList + skillList
+        self.finalList = [utf8dict[idSk] for idSk in skillList]
+        self.skillIds  = skillList
         self.nameField = nameField
         self.db        = database
         self.tablename = "habilidad"
@@ -21,7 +22,7 @@ class Character:
     
     def __newTableCharacter(self):
         # TODO: Check fields in SkillSet == fields in  table
-        self.db.createTableText(self.finalList, self.tablename)
+        self.db.createTableText(self.skillIds, self.tablename)
 
     def __readEntity(self):
         # Check whether the character exists and read database if that's the case
@@ -29,7 +30,7 @@ class Character:
         characterQuery = self.db.readTable(self.tablename, self.nameField, self.name)
 
         if len(characterQuery) == 1:
-            character = characterQuery[0][1:]
+            character = characterQuery[0][1:] # Remove id field
         elif len(characterQuery) == 0:
             return False
         else:
@@ -43,6 +44,15 @@ class Character:
             self.skillSet[skill] = value
         return True
 
+    def __saveNewEntity(self, dictionary, idList):
+        # store into database
+        inputList = []
+        for skill in idList:
+            inputList.append(dictionary[skill])
+        self.db.insertDataInTable(inputList, self.tablename)
+        # Update character
+        self.exists = self.__readEntity()
+
     def printEntity(self):
         return self.skillSet
 
@@ -52,31 +62,32 @@ class Character:
         else:
             return None
 
-    def saveNewEntity(self, dictionary):
-        # store into database
-        inputList = []
-        for skill in self.finalList:
-            inputList.append(dictionary[skill])
-        self.db.insertDataInTable(inputList, self.tablename)
-        # Update character
-        self.exists = self.__readEntity()
+    def saveNewEntityByName(self, dictionary):
+        self.__saveNewEntity(dictionary, self.finalList)
+
+    def saveNewEntityById(self, dictionary):
+        self.__saveNewEntity(dictionary, self.skillIds)
 
     def modifyEntity(self, field, value): 
         # TODO: Check field is actually in the list of fields
-        self.db.modifyRecord(self.tablename, field, value, self.nameField, self.name)
+        # Let's get the index of the field to ge the idname of the field
+        if "sk" in field:
+            fieldId = field
+        else:
+            index   = self.finalList.index(field)
+            fieldId = self.skillIds[index]
+        self.db.modifyRecord(self.tablename, fieldId, value, self.nameField, self.name)
         # Update character
         self.exists = self.__readEntity()
 
-
-
 if __name__ == "__main__":
-    from SkillSet import statList, skillList
+    from SkillSet import skillList
     from sqhelper import basedatos
     print("Testing character class: ")
     charName = input("Enter the new character name: ")
     dictIn = {}
     j      = 0
-    listTo = statList + skillList
+    listTo = skillList
     for skill in listTo:
         dictIn[skill] = str(j)
         j += 1
@@ -84,17 +95,19 @@ if __name__ == "__main__":
     # Create a new character and save it the database
     database  = basedatos("Relgan.dat")
     newCharacter = Character(database, charName)
-    newCharacter.saveNewEntity(dictIn)
+    newCharacter.saveNewEntityById(dictIn)
     # Read the character back from the database
     print("Reading an old character:")
     oldCharacter = Character(database, charName)
     dictOut = oldCharacter.printEntity()
-    for skill in listTo:
+    listNames = oldCharacter.finalList
+    for skill in listNames:
         print(skill + ": " + dictOut[skill]) 
     print("Modifying some skill:")
-    oldCharacter.modifyEntity(listTo[5], "Pepito")
+    oldCharacter.modifyEntity(listNames[5], "Pepito")
     dictOut = oldCharacter.printEntity()
-    for skill in listTo:
+    listNames = oldCharacter.finalList
+    for skill in listNames:
         print(skill + ": " + dictOut[skill]) 
 #    print(oldCharacter.printSkill("Engañar"))
 
