@@ -80,6 +80,24 @@ class Character:
         # Update character
         self.exists = self.__readEntity()
 
+    def modifyEntireEntity(self, dictIn):
+        keys   = dictIn.keys()
+        values = []
+        if self.skillIds[-1] in keys:
+            if self.nameField not in keys:
+                dictIn[self.nameField] = self.name
+            for skillId in self.skillIds:
+                values.append(dictIn[skillId])
+        elif self.finalList[-1] in keys:
+            idxname = self.skillIds.index(self.nameField)
+            if self.finalList[idxname] not in keys:
+                dictIn[self.finalList[idxname]] = self.name
+            for skillName in self.finalList:
+                values.append(dictIn[skillId])
+        self.db.modifyRecordMany(self.tablename, self.skillIds, values, self.nameField, self.name)
+        # Update character
+        self.exists = self.__readEntity()
+
 if __name__ == "__main__":
     from SkillSet import skillList
     from sqhelper import basedatos

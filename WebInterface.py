@@ -8,8 +8,12 @@ def dropNameField(listIn, nameField):
     return listOut
 
 def getCharacter(name, dbPath):
-    from .Character import Character
-    from .sqhelper import basedatos
+    if __name__ == "__main__":
+        from Character import Character
+        from sqhelper import basedatos
+    else:
+        from .Character import Character
+        from .sqhelper import basedatos
     db        = basedatos(dbPath)
     character = Character(db, name)
     if not character.exists:
@@ -21,19 +25,38 @@ def getCharacter(name, dbPath):
     return outFields, nameField, dictOut
 
 def listFields():
-    from .SkillSet import statList, skillList, nameField
-    finalList = dropNameField(statList + skillList, nameField)
-    return finalList, nameField
+    if __name__ == "__main__":
+        from SkillSet import skillList, nameField, utf8dict
+    else:
+        from .SkillSet import skillList, nameField, utf8dict
+    idList   = dropNameField(skillList, nameField)
+    nameList = [utf8dict[idSk] for idSk in idList]
+    return idList, nameList, nameField
 
 def saveCharacter(name, dbPath, dictIn):
-    from .Character import Character
-    from .sqhelper import basedatos
+    if __name__ == "__main__":
+        from Character import Character
+        from sqhelper import basedatos
+    else:
+        from .Character import Character
+        from .sqhelper import basedatos
     db        = basedatos(dbPath)
     character = Character(db, name)
     if character.exists:
         return -1
-    character.saveNewEntity(dictIn)
+    character.saveNewEntityById(dictIn)
     return 0
+
+def modifyCharacter(name, dbPath, dictIn):
+    if __name__ == "__main__":
+        from Character import Character
+        from sqhelper import basedatos
+    else:
+        from .Character import Character
+        from .sqhelper import basedatos
+    db        = basedatos(dbPath)
+    character = Character(db, name)
+    character.modifyEntireEntity(dictIn)
 
 
 if __name__ == "__main__":
@@ -41,18 +64,25 @@ if __name__ == "__main__":
     print(a)
     print(b)
     print(c)
-    listTo, namef = listFields()
+    listTo, names, namef = listFields() # working with ids here
     dictIn = {}
     j = 2
     for skill in listTo:
         dictIn[skill] = str(j)
         j += 1
-    dictIn[namef] = "Pepito"
-    saveCharacter("Pepito", "Relgan.dat", dictIn)
-    a, b, c = getCharacter("Pepito", "Relgan.dat")
+#     saveCharacter("Pepit3", "Relgan.dat", dictIn)
+    a, b, c = getCharacter("Pepit3", "Relgan.dat")
     print(a)
     print(b)
     print(c)
+    print("And now modify the entire entity just to get value 5 into JAJAJAJABIEN")
+    dictIn[listTo[4]] = "JAJAJAJAJABIEN"
+    modifyCharacter("Pepit3", "Relgan.dat", dictIn)
+    a, b, c = getCharacter("Pepit3", "Relgan.dat")
+    print(a)
+    print(b)
+    print(c)
+
 
 
     

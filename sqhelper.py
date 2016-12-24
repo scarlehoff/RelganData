@@ -73,6 +73,16 @@ class basedatos:
         self.executeAndCommitDB(cadena, tupla)
         print("Data modified for " + idValue)
 
+    def modifyRecordMany(self, table, fieldNames, newValues, idField, idValue):
+        cadena  = "UPDATE " + table + " SET "
+        for fieldName in fieldNames:
+            cadena += fieldName + " = ?, "
+        cadena  = cadena[:-2]
+        cadena += " WHERE " + idField + " = ?"
+        lista   = newValues + [idValue]
+        self.executeAndCommitDB(cadena, lista)
+        print("Data modified for " + idValue)
+
 #     def modifyRecord(self, tabla):
 #          # Modify a record of the table tabla
 #         d = self.readTable(tabla)
