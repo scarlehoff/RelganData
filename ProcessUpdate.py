@@ -4,6 +4,7 @@ class ProcessUpdate:
         self.db       = db       # basedatos Class
         self.telegram = telegram # TelegramUtil Clss
         self.response = None
+        self.mapPath  = "img/mapImg"
         self.__debugFunction() # print debug
         if self.update.isCommand:
             command = self.update.command
@@ -19,6 +20,8 @@ class ProcessUpdate:
             self.__printPoder()
         elif command == "store":
             self.__storeInfo()
+        elif command == "map" or command == "mapa":
+            self.__mapProcess()
         elif command == "masaje":
             self.__sendMessage("a ver, túmbate en esa camilla")
         elif command == "r" or command == "roll":
@@ -48,12 +51,23 @@ class ProcessUpdate:
         helpmsg = "This is the help message, it is useless because my Master is very lazy, sorry"
         self.__sendMessage(helpmsg)
         
-    def __saveImg(self):
+    def __saveImg(self, fileOut = None):
         fileUrl  = self.telegram.getFilePath(self.update.fileId)
         from urllib import request
-        filename = "img/" + self.update.fileId
+        if fileOut:
+            filename = fileOut
+        else:
+            filename = "img/" + self.update.fileId
         resource = request.urlretrieve(fileUrl, filename)
         return filename
+
+    def __mapProcess(self):
+        # If the message have a file, store it, else, print it
+        if self.update.isFile:
+            dummy = self.__saveImg(self.mapPath)
+            self.__sendMessage("Oido cocina!")
+        else:
+            self.__sendImage(self.mapPath)
 
     def __printHabilidad(self):
         from Character import Character
