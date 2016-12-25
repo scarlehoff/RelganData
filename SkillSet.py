@@ -29,6 +29,10 @@ utf8dict  = {
   "sk24":"Sigilo",
   "sk25":"PG max",
   "sk26":"PG actual",
+  "sk27":"CA",
+  "sk28":"FORT",
+  "sk29":"REF",
+  "sk30":"VOL",
   }
 
 skillList = ["sk01",
@@ -56,4 +60,9 @@ skillList = ["sk01",
              "sk23",
              "sk24",
              "sk25",
-             "sk26"]
+             "sk26",
+             "sk27",
+             "sk28",
+             "sk29",
+             "sk30"
+             ]
