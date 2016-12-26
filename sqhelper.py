@@ -70,6 +70,8 @@ class basedatos:
         cadena  = "UPDATE " + table + " SET " + fieldName + " = ? WHERE "
         cadena += idField + " = ?"
         tupla   = (newValue, idValue)
+        print(cadena)
+        print(tupla)
         self.executeAndCommitDB(cadena, tupla)
         print("Data modified for " + idValue)
 

@@ -12,6 +12,7 @@ class Character:
         self.nameField = nameField
         self.db        = database
         self.tablename = "habilidad"
+        self.statusDb  = "statustable"
         self.skillSet  = {}
         self.idSet     = {}
         try:
@@ -19,10 +20,12 @@ class Character:
         except:
             pass
         self.name   = name
+        self.status = "None"
         self.exists = self.__readEntity()
     
     def __newTableCharacter(self):
         # TODO: Check fields in SkillSet == fields in  table
+        self.db.createTableText(["name", "status"], self.statusDb)
         self.db.createTableText(self.skillIds, self.tablename)
 
     def __readEntity(self):
@@ -44,6 +47,15 @@ class Character:
         for skid, skill, value in zip(self.skillIds, self.finalList, character):
             self.skillSet[skill] = value
             self.idSet[skid]     = value
+
+        # Read the status as well
+        statusQuery = self.db.readTable(self.statusDb, "name", self.name, "status")
+        if len(statusQuery) == 1:
+            self.status = statusQuery[0][0]
+        else:
+            # Generate first value
+            self.db.insertDataInTable([self.name, self.status], self.statusDb)
+
         return True
 
     def __saveNewEntity(self, dictionary, idList):
@@ -54,6 +66,12 @@ class Character:
         self.db.insertDataInTable(inputList, self.tablename)
         # Update character
         self.exists = self.__readEntity()
+
+    def setStatus(self, text):
+        self.db.modifyRecord(self.statusDb, "status", text, "name", self.name)
+
+    def readStatus(self):
+        return self.status
 
     def printEntity(self):
         return self.skillSet
@@ -78,12 +96,17 @@ class Character:
         # Let's get the index of the field to ge the idname of the field
         if "sk" in field:
             fieldId = field
+            if fieldId  not in self.skillIds:
+                return -1
         else:
+            if field not in self.finalList:
+                return -1
             index   = self.finalList.index(field)
             fieldId = self.skillIds[index]
         self.db.modifyRecord(self.tablename, fieldId, value, self.nameField, self.name)
         # Update character
         self.exists = self.__readEntity()
+        return 0
 
     def modifyEntireEntity(self, dictIn):
         keys   = dictIn.keys()

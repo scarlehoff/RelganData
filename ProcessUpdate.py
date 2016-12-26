@@ -21,13 +21,15 @@ class ProcessUpdate:
         elif command == "store":
             self.__storeInfo()
         elif command == "map" or command == "mapa":
-            self.__mapProcess()
+            self.__mapProcess(True)
         elif command == "masaje":
             self.__sendMessage("a ver, túmbate en esa camilla")
         elif command == "r" or command == "roll":
             self.__rollDice()
         elif command == "start":
             self.__sendMessage("Welcome!")
+        elif command == "battlestat" or command == "status":
+            self.__battleStatus()
         else:
             self.__printError("Command not recognised")
 
@@ -47,6 +49,22 @@ class ProcessUpdate:
         print("     Does it have a file?: " + str(self.update.isFile))
         print("     The whole thing is: " + str(self.update.json))
 
+    def __battleStatus(self):
+        from Character import Character
+        args = self.update.text
+        if args == "all":
+            dummyChar = Character("Dummy")
+            dummyChar.printStatus(allStat=True)
+        else:
+            character = Character(self.db, args)
+            if character.exists:
+                text      = character.readStatus()
+                textFinal = " > " + args + ":\n" + text
+                self.__sendMessage(textFinal)
+            else:
+                self.__printError("¿Y " + args + " quién coño eh?")
+                return
+
     def __sendHelp(self):
         helpmsg = "This is the help message, it is useless because my Master is very lazy, sorry"
         self.__sendMessage(helpmsg)
@@ -61,11 +79,11 @@ class ProcessUpdate:
         resource = request.urlretrieve(fileUrl, filename)
         return filename
 
-    def __mapProcess(self):
+    def __mapProcess(self, info = None):
         # If the message have a file, store it, else, print it
         if self.update.isFile:
             dummy = self.__saveImg(self.mapPath)
-            self.__sendMessage("Oido cocina!")
+            if info: self.__sendMessage("Oido cocina!")
         else:
             self.__sendImage(self.mapPath)
 
@@ -98,9 +116,24 @@ class ProcessUpdate:
 
     def __storeInfo(self):
         args = self.update.text.split(' ')
+        from Character import Character
         if args[0] == "habilidad" and len(args) == 4:
-            self.__sendMessage("Please, use the web interface.")
-#             self.db.insertDataInTable(args[1:], "habilidad")
+            charName  = args[1]
+            skillName = args[2]
+            value     = args[3]
+            character = Character(self.db, charName)
+            if not character.exists:
+                self.__printError("¿Pero este señor quién es?")
+                return
+            error     = character.modifyEntity(skillName, value)
+            if error == -1:
+                self.__printError("Probablemente te has confundido al escribir " + skillName)
+                return
+            elif error == -2:
+                self.__printError("Ya has roto algo... pero esto no ha funcionado")
+                return
+        elif args[0] == "map" or args[0] == "mapa":
+            self.__mapProcess()
         elif args[0] == "poder":
             if self.update.isFile:
                 imgPath = self.__saveImg()
@@ -108,6 +141,16 @@ class ProcessUpdate:
                 self.db.insertDataInTable([imgName, imgPath], "poder")
             else:
                 self.__printError("Necesito una imagen para el poder tiiio!")
+                return
+        elif args[0] == "battlestat" or args[0] == "status":
+            charName = args[1]
+            text     = ""
+            for i in args[2:]: text += i + " "
+            character = Character(self.db, charName)
+            if character.exists:
+                character.setStatus(text)
+            else:
+                self.__printError("¿Pero este señor quién es?")
                 return
         else:
             self.__printError("Necesitas mas argumentos para esto cabesa")
