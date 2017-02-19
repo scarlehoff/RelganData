@@ -1,181 +1,126 @@
-// Get a reference to the canvas
 var canvas = document.getElementById("dungeon_map");
-// store the 2D rendering context in ctx
 var ctx    = canvas.getContext("2d");
+var width  = 50;
+var height = 50;
+var Nx     =  8;
+var Ny     =  8;
 
-// store the information on which key has the user pressed
-var rightPressed = false;
-var leftPressed = false;
+// Define sprites
+var samusAran = {
+   active : false,
+   sprite : new Image(),
+   width  : 40,
+   height : 40,
+   posX   : 1,
+   posY   : 1
+}
+samusAran.sprite.src = "samus.png";
+var pikachu = {
+   active : false,
+   sprite : new Image(),
+   width  : 40,
+   height : 40,
+   posX   : 3,
+   posY   : 3
+}
+pikachu.sprite.src = "pikachu.png";
 
-// Define the ball
-var ballRadius = 10;
-var x = canvas.width/2;
-var y = canvas.height-30;
-var dx = 6;
-var dy = -6;
 
-// Define the paddle
-var paddleHeight = 10;
-var paddleWidth  = 75;
-var paddleX = (canvas.width - paddleWidth)/2; //starting point
+var sprites = [];
+sprites[0] = samusAran;
+sprites[1] = pikachu;
 
-//track the score
-var score = 0;
+function selectSprite() {
+   character = parseInt(document.getElementById("character").value);
+   console.log(character);
+   return character ;
+}
 
-// handle the keystrokes
-// when a key is pressed (or released) the following two functions are called by 
-// the "event listener" :
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-function keyDownHandler(e) {
-   if (e.keyCode == 39) {
-      rightPressed = true;
-   } else if (e.keyCode == 37) {
-      leftPressed = true;
+// Mouse control
+canvas.addEventListener('mousedown', function(e) {
+   var mouseXY  = mousePosition(canvas, e);
+   var spriteXY = crByPosition(mouseXY.x, mouseXY.y);
+   var N        = selectSprite();
+   var sprite   = sprites[N];
+   if (sprite.active) {
+      ctx.clearRect(sprite.posX, sprite.posY, sprite.width, sprite.height);
+   }
+   ctx.drawImage(sprite.sprite, 0, 0, 40, 40,  spriteXY.x + 3, spriteXY.y + 3, 40, 40);
+   sprites[N].posX   = spriteXY.x + 3;
+   sprites[N].posY   = spriteXY.y + 3;
+   sprites[N].active = true;
+}, false);
+function mousePosition(canvas, e) {
+   var rect = canvas.getBoundingClientRect();
+   return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+   };
+}
+
+// Grid definition + drawing
+function defineGrid() {
+   Nx     = document.getElementById("nx").value
+   Ny     = document.getElementById("ny").value
+   rectangles = [];
+   for (c=0; c < Nx; c++) {
+      rectangles[c] = [];
+      for (r=0; r<Ny; r++) {
+         rectangles[c][r] = { 
+            x:0, y:0, 
+            xfin: 0, yfin: 0 };
+      }
    }
 }
 
-function keyUpHandler(e) {
-   if (e.keyCode == 39) {
-      rightPressed = false;
-   } else if (e.keyCode == 37) {
-      leftPressed = false;
+function drawRectangles() {
+   for (c=0; c < Nx; c++) {
+      for (r=0; r<Ny; r++) {
+         var recX = (c*(width)) ;
+         var recY = (r*(height));
+         rectangles[c][r].x = recX;
+         rectangles[c][r].y = recY;
+         rectangles[c][r].xfin = recX + width
+         rectangles[c][r].yfin = recY + height
+         ctx.beginPath();
+         ctx.rect(recX, recY, width, height);
+         ctx.stroke();
+         ctx.closePath();
+      }
    }
 }
 
-
-//We can add mouse control as well!
-document.addEventListener("mousemove", mouseMoveHandler, false);
-function mouseMoveHandler(e) {
-   var relativeX = e.clientX - canvas.offsetLeft;
-   if (relativeX > 0 && relativeX < canvas.width) {
-      paddleX = relativeX - paddleWidth/2;
-   }
-}
-
-
-// let set up the bricks!
-var brickRowCount = 3;
-var brickColumnCount = 5;
-var brickWidth = 75;
-var brickHeight = 20;
-var brickPadding = 10;
-var brickOffsetTop = 30;
-var brickOffsetLeft = 30;
-
-var bricks = [];
-for(c=0; c<brickColumnCount; c++) {
-bricks[c] = [];
-for(r=0; r<brickRowCount; r++) {
-      // let's add an extra parameter to the brick
-      // to see whether they are active or not
-   bricks[c][r] = { x: 0, y: 0, status: 1};
-}
-}
-
-// loop over the brick array and draw them on screen!
-function drawBricks() {
-   var bricksLeft = false;
-for(c=0; c<brickColumnCount; c++) {
-   for(r=0; r<brickRowCount; r++) {
-      var brickX = (c*(brickWidth + brickPadding)) + brickOffsetLeft;
-            var brickY = (r*(brickHeight + brickPadding)) + brickOffsetTop;
-            if (bricks[c][r].status == 0) continue;
-      bricks[c][r].x = brickX;
-      bricks[c][r].y = brickY;
-      ctx.beginPath();
-      ctx.rect(brickX, brickY, brickWidth, brickHeight);
-      ctx.fillStyle = "#0095DD";
-      ctx.fill();
-      ctx.closePath();
-            bricksLeft = true;
-   }
-}
-   if (!bricksLeft) {
-      alert("You won! Congratulations!");
-      document.location.reload();
-   }
-}
-
-// Now we also need a colission detection function!
-function collisionDetection() {
-for(c=0; c<brickColumnCount; c++) {
-   for(r=0; r<brickRowCount; r++) {
-            var b = bricks[c][r];
-            // if the x/y position of the ball is inside the brick, then we collide
-            // and the ball gets "bounced back"
-            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y +brickHeight && b.status == 1) {
-               dy = -dy ;
-               b.status = 0;
-               bricks[c][r] = b;
-               score++;
+// Find rectangle by position
+function crByPosition(x, y) {
+   for (c=0; c < Nx; c++) {
+      refX = rectangles[c][0].xfin;
+      if ( x < refX ) {
+         for (r=0; r < Ny; r++) {
+            refY = rectangles[c][r].yfin;
+            if( y < refY) {
+               break;
             }
+         }
+         break;
       }
    }
-}
-   
-
-function drawPaddle() {
-   ctx.beginPath();
-   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-   ctx.fillStyle = "#0095DD";
-   ctx.fill();
-   ctx.closePath();
+   console.log("Rectangle: " + c + "," + r);
+   return {
+      x: rectangles[c][r].x,
+      y: rectangles[c][r].y
+   };
 }
 
-function drawBall() {
-   ctx.beginPath();
-   ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-   ctx.fillStyle = "#0095DD";
-   ctx.fill();
-   ctx.closePath();
-}
 
-function drawScore() {
-   ctx.font = "16px Arial";
-   ctx.fillStyle = "#0095DD";
-   ctx.fillText("Score: " + score, 8, 20);
-}
 
+// Draw the grid
 function draw() {
-   ctx.clearRect(0,0,canvas.width, canvas.height);
-   drawBall();
-   drawPaddle();
-   drawBricks();
-   collisionDetection();
-   drawScore();
-
-   if (dy == 0) dy = 4;
-
-   if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
-   dx = -dx;
-}
-if(y + dy < ballRadius) {
-   dy = -dy;
-   } else if (y + dy > canvas.height-ballRadius) {
-      // I've removed the gameover because it's annoying
-      // but if the ball "escapes" the paddle it will be stuck forever!
-      // (until we hit it again...)
-      if ( x > paddleX && x < paddleX + paddleWidth) {
-            dy = -dy;
-      } else { 
-            dy = 0;
-      }
-   }
-
-if(rightPressed && paddleX < canvas.width-paddleWidth) {
-   paddleX += 7;
-}
-else if(leftPressed && paddleX > 0) {
-   paddleX -= 7;
+   console.log("call function draw");
+   defineGrid();
+   ctx.clearRect( 0, 0, canvas.width, canvas.height);
+   drawRectangles();
 }
 
-   x += dx;
-   y += dy;
+console.log("script: %o", document.getElementById("dungeon_map"));
+draw();
 
-   // Lets also improve the feeling of the game with
-   requestAnimationFrame(draw);
-}
-// since we are now calling the function draw at the end of itself (so it will recusively call itself 4-ever
-// we don't need setInterval anymore:
-// draw();

@@ -22,11 +22,14 @@ def main():
     while True:
         updates = ut.getUpdates()
         for update in updates:
-            updateParsed = Message(update)
-            if updateParsed.ignore:
-                continue
-            else:
-                processedUpdate = ProcessUpdate(updateParsed, db, ut)
+            try:
+                updateParsed = Message(update)
+                if updateParsed.ignore:
+                    continue
+                else:
+                    processedUpdate = ProcessUpdate(updateParsed, db, ut)
+            except:
+                pass
 
 if __name__ == '__main__':
     main()

@@ -210,7 +210,12 @@ class ProcessUpdate:
             finalResult += i
             finalStr    += "(" + str(i) + ")" + " + "
         if mod:
-            modifiers    = eval(mod) # spooky
+            # Before continuing, check only digits are being used
+            if not mod.replace("+","").replace("-","").isdigit():
+                self.__printError("Syntax error: Se escribe tal que: /r 2d20+4-5 cosas")
+                return
+            from ast import literal_eval
+            modifiers    = literal_eval(mod)
             finalResult += modifiers
             finalStr    += mod
         else:
@@ -220,6 +225,7 @@ class ProcessUpdate:
         finalMsg  = self.update.username + " rolled " + text + ":"
         finalMsg += "\n" + finalStr
         self.__sendMessage(finalMsg)
+
 
     def __printError(self, errorMsg):
         self.__sendMessage("Error: " + errorMsg)
