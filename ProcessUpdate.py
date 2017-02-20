@@ -157,49 +157,45 @@ class ProcessUpdate:
             return
         self.__sendMessage("Oido cocina!")
 
-    def __parseDice(self):
-        text  = self.update.text
-        plus  = 9999
-        minus = 9999
-        if '+' in text:
-            plus = text.index('+')
-        if '-' in text:
-            plus = text.index('-')
-        if plus == minus:
-            dice = text.split(' ', 1)[0]
-            mod  = None
-        elif plus > minus:
-            cleanText = text.split(' ',1)[0]
-            dice = cleanText.split('-', 1)[0]
-            mod  = cleanTtext.split('-', 1)[1]
-        elif minus > plus:
-            cleanText = text.split(' ',1)[0]
-            dice = cleanText.split('+', 1)[0]
-            mod  = cleanText.split('+', 1)[1]
+    def __parseDice(self, text):
+        import re
+        fpm    = re.compile("\+|-")
+        moding = text.rpartition("d")[-1]
+        nindex = fpm.search(moding)
+        if nindex:
+            mod  = moding[nindex.start():]
+            dice = text.partition(mod)[0]
         else:
-            self.__printError("Vaya, esto no me lo esperaba")
-            return
-        return dice, mod
+            mod  = ""
+            dice = text
+        diceList = fpm.split(dice)
+        pmList   = fpm.findall(dice)
+        if (len(pmList) < len(diceList)): pmList.insert(0, '+')
+        return diceList, pmList, mod
 
     def __rollDice(self):
-        texts     = self.update.text.split(' ',1)
-        dice, mod = self.__parseDice() #self.update.text.split('+',1)
+        texts = self.update.text.split(' ',1)
         if len(texts) == 2:
             text = texts[-1]
         else:
             text = ""
+        diceList, pmList, mod = self.__parseDice(texts[0]) #self.update.text.split('+',1)
         # First let the dice roll!
         from random import randint
         try:
-            if 'd' in dice:
-                ndice  = int(dice.split('d')[0])
-                nface  = int(dice.split('d')[-1])
-                result = []
-                for i in range(ndice):
-                    result.append(randint(1,nface))
-            else:
-                self.__printError("Syntax error: Se escribe tal que: /r 2d20+4-5 cosas")
-                return
+            result = []
+            for die,sign in zip(diceList, pmList):
+                if 'd' in die:
+                    ndie   = int(die.split('d')[0])
+                    nface  = int(die.split('d')[-1])
+                    for i in range(ndie):
+                        if sign == '+':
+                            result.append(randint(1,nface))
+                        elif sign == '-':
+                            result.append(-randint(1,nface))
+                else:
+                    self.__printError("Syntax error: Se escribe tal que: /r 2d20+4-5 cosas")
+                    return
         except:
             self.__printError("Syntax error: Se escribe tal que: /r 2d20+4-5 cosas")
             return
@@ -209,6 +205,7 @@ class ProcessUpdate:
         for i in result:
             finalResult += i
             finalStr    += "(" + str(i) + ")" + " + "
+        if len(finalStr) > 1 and len(mod) > 0: finalStr = finalStr[:-2]
         if mod:
             # Before continuing, check only digits are being used
             if not mod.replace("+","").replace("-","").isdigit():
