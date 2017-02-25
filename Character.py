@@ -1,28 +1,27 @@
 # -*- coding: utf-8 -*-
 class Character:
 
-    def __init__(self, database, name):
+    def __init__(self, databaseIn, name):
         if __name__ == "Character" or __name__ == "__main__":
             from SkillSet import nameField, skillList, utf8dict
         else:
             from .SkillSet import nameField, skillList, utf8dict
-        # TODO: This should be input!
         self.finalList = [utf8dict[idSk] for idSk in skillList]
-        self.skillIds  = skillList
+        self.skillIds = skillList
         self.nameField = nameField
-        self.db        = database
+        self.db = databaseIn
         self.tablename = "habilidad"
-        self.statusDb  = "statustable"
-        self.skillSet  = {}
-        self.idSet     = {}
+        self.statusDb = "statustable"
+        self.skillSet = {}
+        self.idSet = {}
         try:
             self.__newTableCharacter()
         except:
             pass
-        self.name   = name
+        self.name = name
         self.status = "None"
         self.exists = self.__readEntity()
-    
+
     def __newTableCharacter(self):
         # TODO: Check fields in SkillSet == fields in  table
         self.db.createTableText(["name", "status"], self.statusDb)
@@ -31,14 +30,16 @@ class Character:
     def __readEntity(self):
         # Check whether the character exists and read database if that's the case
         # return true if it exists and false otherwise
-        characterQuery = self.db.readTable(self.tablename, self.nameField, self.name)
+        characterQuery = self.db.readTable(
+            self.tablename, self.nameField, self.name)
 
         if len(characterQuery) == 1:
-            character = characterQuery[0][1:] # Remove id field
+            character = characterQuery[0][1:]  # Remove id field
         elif len(characterQuery) == 0:
             return False
         else:
-            print(" >> There was something wrong in the Character reading, more than 1 character")
+            print(
+                " >> There was something wrong in the Character reading, more than 1 character")
             print(" CharacterQuery: ")
             print(characterQuery)
             print("Let's treat it as true for safety and select the last one")
@@ -46,10 +47,11 @@ class Character:
 
         for skid, skill, value in zip(self.skillIds, self.finalList, character):
             self.skillSet[skill] = value
-            self.idSet[skid]     = value
+            self.idSet[skid] = value
 
         # Read the status as well
-        statusQuery = self.db.readTable(self.statusDb, "name", self.name, "status")
+        statusQuery = self.db.readTable(
+            self.statusDb, "name", self.name, "status")
         if len(statusQuery) == 1:
             self.status = statusQuery[0][0]
         else:
@@ -91,25 +93,26 @@ class Character:
     def saveNewEntityById(self, dictionary):
         self.__saveNewEntity(dictionary, self.skillIds)
 
-    def modifyEntity(self, field, value): 
+    def modifyEntity(self, field, value):
         # TODO: Check field is actually in the list of fields
         # Let's get the index of the field to ge the idname of the field
         if "sk" in field:
             fieldId = field
-            if fieldId  not in self.skillIds:
+            if fieldId not in self.skillIds:
                 return -1
         else:
             if field not in self.finalList:
                 return -1
-            index   = self.finalList.index(field)
+            index = self.finalList.index(field)
             fieldId = self.skillIds[index]
-        self.db.modifyRecord(self.tablename, fieldId, value, self.nameField, self.name)
+        self.db.modifyRecord(self.tablename, fieldId,
+                             value, self.nameField, self.name)
         # Update character
         self.exists = self.__readEntity()
         return 0
 
     def modifyEntireEntity(self, dictIn):
-        keys   = dictIn.keys()
+        keys = dictIn.keys()
         values = []
         if self.skillIds[-1] in keys:
             if self.nameField not in keys:
@@ -122,24 +125,25 @@ class Character:
                 dictIn[self.finalList[idxname]] = self.name
             for skillName in self.finalList:
                 values.append(dictIn[skillId])
-        self.db.modifyRecordMany(self.tablename, self.skillIds, values, self.nameField, self.name)
+        self.db.modifyRecordMany(
+            self.tablename, self.skillIds, values, self.nameField, self.name)
         # Update character
         self.exists = self.__readEntity()
 
 if __name__ == "__main__":
     from SkillSet import skillList
-    from sqhelper import basedatos
+    from sqhelper import Basedatos
     print("Testing character class: ")
     charName = input("Enter the new character name: ")
     dictIn = {}
-    j      = 0
+    j = 0
     listTo = skillList
     for skill in listTo:
         dictIn[skill] = str(j)
         j += 1
     dictIn[listTo[0]] = charName
     # Create a new character and save it the database
-    database  = basedatos("Relgan.dat")
+    database = Basedatos("Relgan.dat")
     newCharacter = Character(database, charName)
     newCharacter.saveNewEntityById(dictIn)
     # Read the character back from the database
@@ -148,14 +152,11 @@ if __name__ == "__main__":
     dictOut = oldCharacter.printEntity()
     listNames = oldCharacter.finalList
     for skill in listNames:
-        print(skill + ": " + dictOut[skill]) 
+        print(skill + ": " + dictOut[skill])
     print("Modifying some skill:")
     oldCharacter.modifyEntity(listNames[5], "Pepito")
     dictOut = oldCharacter.printEntity()
     listNames = oldCharacter.finalList
     for skill in listNames:
-        print(skill + ": " + dictOut[skill]) 
+        print(skill + ": " + dictOut[skill])
 #    print(oldCharacter.printSkill("Engañar"))
-
-
-

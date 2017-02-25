@@ -20,11 +20,11 @@ def dropNameField(listIn, nameField, listIn2 = None):
 def getCharacter(name, dbPath):
     if __name__ == "__main__":
         from Character import Character
-        from sqhelper import basedatos
+        from sqhelper import Basedatos
     else:
         from .Character import Character
-        from .sqhelper import basedatos
-    db        = basedatos(dbPath)
+        from .sqhelper import Basedatos
+    db        = Basedatos(dbPath)
     character = Character(db, name)
     if not character.exists:
         return -1
@@ -46,12 +46,12 @@ def listFields():
 
 def listCharacters(dbPath):
     if __name__ == "__main__":
-        from sqhelper import basedatos
+        from sqhelper import Basedatos
         from SkillSet import nameField, tableName
     else:
-        from .sqhelper import basedatos
+        from .sqhelper import Basedatos
         from .SkillSet import nameField, tableName
-    db         = basedatos(dbPath)
+    db         = Basedatos(dbPath)
     characters = db.readTable(tableName, returnVal = nameField)
     return characters
 
@@ -59,11 +59,11 @@ def listCharacters(dbPath):
 def saveCharacter(name, dbPath, dictIn):
     if __name__ == "__main__":
         from Character import Character
-        from sqhelper import basedatos
+        from sqhelper import Basedatos
     else:
         from .Character import Character
-        from .sqhelper import basedatos
-    db        = basedatos(dbPath)
+        from .sqhelper import Basedatos
+    db        = Basedatos(dbPath)
     character = Character(db, name)
     if character.exists:
         return -1
@@ -73,11 +73,11 @@ def saveCharacter(name, dbPath, dictIn):
 def modifyCharacter(name, dbPath, dictIn):
     if __name__ == "__main__":
         from Character import Character
-        from sqhelper import basedatos
+        from sqhelper import Basedatos
     else:
         from .Character import Character
-        from .sqhelper import basedatos
-    db        = basedatos(dbPath)
+        from .sqhelper import Basedatos
+    db        = Basedatos(dbPath)
     character = Character(db, name)
     character.modifyEntireEntity(dictIn)
 
