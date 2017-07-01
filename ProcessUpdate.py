@@ -32,6 +32,8 @@ class ProcessUpdate:
             self.__sendMessage("Welcome!")
         elif command == "battlestat" or command == "status":
             self.__battleStatus()
+        elif command == "ping":
+            self.__stillAlive()
         else:
             self.__printError("Command not recognised")
 
@@ -51,6 +53,24 @@ class ProcessUpdate:
         print("     Content: " + self.update.command + " " + self.update.text)
         print("     Does it have a file?: " + str(self.update.isFile))
         print("     The whole thing is: " + str(self.update.json))
+
+    def __stillAlive(self):
+        from random import randint
+        sentences = [
+            "Pong",
+            "This was a triumph",
+            "HUGE SUCCESS",
+            "You torn me to pieces",
+            "Go ahead and leave me",
+            "This cake is great, it's so delicious and moist",
+            "Believe me, I am still alive",
+            "I'm doing science and I'm still alive",
+            "I feel FANTASTIC and I'm still alive",
+            "While you're dying I'll be still alive",
+            "When you're dead I will be still alive"
+        ]
+        r = randint(0,len(sentences)-1)
+        self.__sendMessage(sentences[r])
 
     def __battleStatus(self):
         from Character import Character
