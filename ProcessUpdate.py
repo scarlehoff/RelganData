@@ -18,7 +18,7 @@ class ProcessUpdate:
             return
         if command == "habilidad":
             self.__printHabilidad()
-        elif command == "poder":
+        elif command == "poder" or command == "meme":
             self.__printPoder()
         elif command == "store":
             self.__storeInfo()
