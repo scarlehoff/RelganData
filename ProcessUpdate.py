@@ -26,6 +26,8 @@ class ProcessUpdate:
             self.__mapProcess(True)
         elif command == "masaje":
             self.__sendMessage("a ver, túmbate en esa camilla")
+        elif command == "rd20":
+            self.__rollDice(rd20 = True)
         elif command == "r" or command == "roll":
             self.__rollDice()
         elif command == "start":
@@ -206,15 +208,19 @@ class ProcessUpdate:
             pmList.insert(0, '+')
         return diceList, pmList, mod
 
-    def __rollDice(self):
-        texts = self.update.text.split(' ', 1)
+    def __rollDice(self, rd20 = False):
+        texts = self.update.text.split(' ', 2)
         if len(texts) == 2:
             text = texts[-1]
         else:
             text = ""
-        diceList, pmList, mod = self.__parseDice(
-            texts[0])  # self.update.text.split('+',1)
-        # First let the dice roll!
+
+        diceText = texts[0]
+        if rd20:
+            diceText = "1d20" + diceText
+
+        diceList, pmList, mod = self.__parseDice(diceText)  
+
         from random import randint
         try:
             result = []
@@ -224,10 +230,6 @@ class ProcessUpdate:
                     nface = int(die.split('d')[-1])
                     for i in range(ndie):
                         result.append(SIGNDICT[sign] * randint(1,nface))
-#                         if sign == '+':
-#                             result.append(randint(1, nface))
-#                         elif sign == '-':
-#                             result.append(-randint(1, nface))
                 else:
                     self.__printError(
                         "Syntax error: Se escribe tal que: /r 2d20+4-5 cosas")
