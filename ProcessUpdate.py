@@ -28,7 +28,7 @@ class ProcessUpdate:
             self.__sendMessage("a ver, túmbate en esa camilla")
         elif command == "rd20":
             self.__rollDice(rd20 = True)
-        elif command == "r" or command == "roll":
+        elif command == "r" or command == "roll" or command == "t" or command == "tirar":
             self.__rollDice()
         elif command == "start":
             self.__sendMessage("Welcome!")
