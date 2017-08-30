@@ -8,6 +8,7 @@ from TelegramUtil import TelegramUtil
 from sqhelper import Basedatos
 from Message import Message
 from ProcessUpdate import ProcessUpdate
+from time import gmtime, strftime
 
 def main():
     # Activate the database
@@ -20,7 +21,11 @@ def main():
     ut = TelegramUtil()
     while True:
         try:
+            now = strftime("%H:%M:%S", gmtime())
+            print("Getting Updates: " + now)
             updates = ut.getUpdates()
+            now = strftime("%H:%M:%S", gmtime())
+            print("Update loop: " + now)
             for update in updates:
                 updateParsed = Message(update)
                 if updateParsed.ignore:
