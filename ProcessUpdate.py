@@ -217,6 +217,10 @@ class ProcessUpdate:
 
         diceText = texts[0]
         if rd20:
+            if len(diceText) > 0:
+                if diceText[0] != "-" and diceText[0] != "+":
+                    text = diceText + " " + text
+                    diceText = ""
             diceText = "1d20" + diceText
 
         diceList, pmList, mod = self.__parseDice(diceText)  
