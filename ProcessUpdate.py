@@ -209,7 +209,7 @@ class ProcessUpdate:
         return diceList, pmList, mod
 
     def __rollDice(self, rd20 = False):
-        texts = self.update.text.split(' ', 2)
+        texts = self.update.text.split(' ', 1)
         if len(texts) == 2:
             text = texts[-1]
         else:
