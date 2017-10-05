@@ -14,10 +14,12 @@ class ProcessUpdate:
         if self.update.isCommand:
             command = self.update.command
         else:
-            self.__sendHelp()
+            self.__stillAlive()
             return
         if command == "habilidad":
             self.__printHabilidad()
+        elif command == "help":
+            self.__sendHelp()
         elif command == "poder" or command == "meme":
             self.__printPoder()
         elif command == "store":

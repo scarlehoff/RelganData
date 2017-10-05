@@ -83,29 +83,29 @@ def modifyCharacter(name, dbPath, dictIn):
 
 
 if __name__ == "__main__":
-    a, b, c = getCharacter("TestingChar", "Relgan.dat")
-    print(a)
-    print(b)
-    print(c)
     listTo, names, namef = listFields() # working with ids here
-    dictIn = {}
-    j = 2
+    dictIn = {"sk01" : ""}
     for skill in listTo:
-        dictIn[skill] = str(j)
-        j += 1
-#     saveCharacter("Pepit3", "Relgan.dat", dictIn)
-    a, b, c = getCharacter("Pepit3", "Relgan.dat")
-    print(a)
-    print(b)
-    print(c)
-    print("And now modify the entire entity just to get value 5 into JAJAJAJABIEN")
-    dictIn[listTo[4]] = "JAJAJAJAJABIEN"
-    modifyCharacter("Pepit3", "Relgan.dat", dictIn)
-    a, b, c = getCharacter("Pepit3", "Relgan.dat")
-    print(a)
-    print(b)
-    print(c)
-
-
-
-    
+        dictIn[skill] = ""
+    saveCharacter("Tulio", "Relgan.dat",dictIn)
+#     a, b, c = getCharacter("TestingChar", "Relgan.dat")
+#     print(a)
+#     print(b)
+#     print(c)
+#     j = 2
+# #     saveCharacter("Pepit3", "Relgan.dat", dictIn)
+#     a, b, c = getCharacter("Pepit3", "Relgan.dat")
+#     print(a)
+#     print(b)
+#     print(c)
+#     print("And now modify the entire entity just to get value 5 into JAJAJAJABIEN")
+#     dictIn[listTo[4]] = "JAJAJAJAJABIEN"
+#     modifyCharacter("Pepit3", "Relgan.dat", dictIn)
+#     a, b, c = getCharacter("Pepit3", "Relgan.dat")
+#     print(a)
+#     print(b)
+#     print(c)
+# 
+# 
+# 
+#     
