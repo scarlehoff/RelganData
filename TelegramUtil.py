@@ -1,10 +1,16 @@
+# Configuration parameters
 from configurationData import TOKEN  # Unique identifier
 telegramURL = "https://api.telegram.org/"
 baseURL = telegramURL + "bot{}/".format(TOKEN)
 baseFileURL = telegramURL + "file/bot{}/".format(TOKEN)
 
+# Necessary imports
+import requests
+import json
 
 class TelegramUtil:
+    """ This class handles all comunications with
+    Telegram """
 
     def __init__(self):
         self.offset = None
@@ -13,17 +19,16 @@ class TelegramUtil:
         self.getFile = baseURL + "getFile"
         self.sendImg = baseURL + "sendPhoto"
 
-    def __makeRequest(self, url):
-        # returns the response of a given url
-        from requests import get
-        response = get(url)
+    def __make_request(self, url):
+        """ Returns the respons of a given url """
+        response = requests.get(url)
         content = response.content.decode("utf-8")
         return content
 
-    def __getJsonFromUrl(self, url):
+    def __get_json_from_url(self, url):
         # given some url, return json response
-        from json import loads
-        return loads(self.__makeRequest(url))
+        content_response = self.__make_request(url)
+        return json.loads(content_response)
 
     def __reOffset(self, updates):
         if len(updates) == 0:
