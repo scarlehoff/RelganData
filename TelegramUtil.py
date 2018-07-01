@@ -40,7 +40,7 @@ class TelegramUtil:
 
     def getFilePath(self, fileId):
         url = self.getFile + "?file_id={}".format(fileId)
-        json = self.__getJsonFromUrl(url)['result']
+        json = self.__get_json_from_url(url)['result']
         fpath = json['file_path']
         return baseFileURL + fpath
 
@@ -51,7 +51,7 @@ class TelegramUtil:
         url = self.getMsg + "?timeout=100"
         if self.offset:
             url += "&offset={}".format(self.offset)
-        updates = self.__getJsonFromUrl(url)
+        updates = self.__get_json_from_url(url)
         try:
             result = updates["result"]
         except Exception as e:
@@ -68,7 +68,7 @@ class TelegramUtil:
         from urllib import parse
         text = parse.quote_plus(text)
         url = self.sendMsg + "?text={}&chat_id={}".format(text, chat)
-        self.__makeRequest(url)
+        self.__make_request(url)
 
     def sendImage(self, imgPath, chat):
         from requests import post
