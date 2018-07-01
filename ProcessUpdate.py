@@ -38,6 +38,8 @@ class ProcessUpdate:
             self.__battleStatus()
         elif command == "ping":
             self.__stillAlive()
+        elif command == "ip":
+            self.__tellIP()
         else:
             self.__printError("Command not recognised")
 
@@ -47,6 +49,16 @@ class ProcessUpdate:
 
     def __sendImage(self, imgPath):
         self.telegram.sendImage(imgPath, self.update.chatId)
+
+    # Give my the public ip of the server where the bot is running 
+    def __tellIP(self):
+        from configurationData import allowed
+        if self.update.username.lower() == allowed.lower():
+            import urllib.request
+            external_ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')
+            self.__sendMessage(external_ip)
+        else:
+            self.__sendMessage("You are not allowed to see this")
 
     # Actual functionality
     def __debugFunction(self):
